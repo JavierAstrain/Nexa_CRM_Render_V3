@@ -3,7 +3,7 @@ services:
     name: nexa-backend
     env: docker
     rootDir: backend
-    plan: starter
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
@@ -11,28 +11,16 @@ services:
       - key: PORT
         value: 8080
       - key: JWT_SECRET
-        sync: false
+        # pon un secreto cualquiera para demo, ej: nexa_demo_secret_123
+        value: nexa_demo_secret_123
       - key: DATABASE_URL
+        # la pondrás en el panel de Render al final (o cámbiala aquí cuando tengas Neon)
         sync: false
       - key: CORS_ORIGIN
-        sync: false
+        # pon * para PMV si quieres ir rápido; luego cámbialo a la URL real del front
+        value: "*"
       - key: VITE_GRAPHQL_URL
-        sync: false
-      - key: OAUTH_GOOGLE_CLIENT_ID
-        sync: false
-      - key: OAUTH_GOOGLE_CLIENT_SECRET
-        sync: false
-      - key: OAUTH_GOOGLE_CALLBACK_URL
-        sync: false
-      - key: SAML_ENTRY_POINT
-        sync: false
-      - key: SAML_ISSUER
-        sync: false
-      - key: SAML_CALLBACK_URL
-        sync: false
-      - key: SAML_PUBLIC_CERT
-        sync: false
-      - key: SAML_PRIVATE_KEY
+        # opcional/informativo, el front usa sus propias VITE_* en build
         sync: false
 
   - type: web
@@ -43,9 +31,8 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_GRAPHQL_URL
+        # La pondrás en el panel cuando tengas la URL del backend
         sync: false
       - key: VITE_REST_URL
+        # La pondrás en el panel cuando tengas la URL del backend
         sync: false
-
-databases:
-  - name: nexa-postgres
