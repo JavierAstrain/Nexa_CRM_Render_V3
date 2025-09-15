@@ -12,7 +12,14 @@ import type { AppContext, AuthUser } from "./types.js";
 
 const prisma = new PrismaClient();
 const app = express();
-
+import { execSync } from "child_process";
+try {
+  console.log("Running prisma migrate deploy...");
+  execSync("pnpm prisma migrate deploy", { stdio: "inherit" });
+  console.log("Migrations applied.");
+} catch (e) {
+  console.error("Prisma migrate failed:", e);
+}
 const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
 app.use(cors({ origin: corsOrigin, credentials: true }));
 app.use(bodyParser.json());
