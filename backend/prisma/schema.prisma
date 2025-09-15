@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
+enum Stage {
+  PROSPECT
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum ActivityType {
+  TASK
+  CALL
+  MEETING
+  NOTE
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Permissions granulares (ejemplo)
+  viewFinancials Boolean @default(true)
+}
+
+model Account {
+  id        String   @id @default(uuid())
+  name      String
+  website   String?
+  phone     String?
+  ownerId   String?
+  owner     User?     @relation(fields: [ownerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  contacts  Contact[]
+  opps      Opportunity[]
+}
+
+model Contact {
+  id         String   @id @default(uuid())
+  firstName  String
+  lastName   String
+  email      String?  @unique
+  phone      String?
+  title      String?
+  accountId  String?
+  account    Account? @relation(fields: [accountId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  activities Activity[]
+}
+
+model Opportunity {
+  id          String   @id @default(uuid())
+  name        String
+  amount      Float?
+  probability Int?     @default(10)
+  stage       Stage    @default(PROSPECT)
+  closeDate   DateTime?
+  accountId   String?
+  account     Account? @relation(fields: [accountId], references: [id])
+  contactId   String?
+  contact     Contact? @relation(fields: [contactId], references: [id])
+  ownerId     String?
+  owner       User?     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  activities  Activity[]
+  quotes      Quote[]
+  score       Int?      // IA scoring
+}
+
+model Activity {
+  id           String       @id @default(uuid())
+  type         ActivityType
+  subject      String
+  dueDate      DateTime?
+  notes        String?
+  contactId    String?
+  contact      Contact?     @relation(fields: [contactId], references: [id])
+  opportunityId String?
+  opportunity  Opportunity? @relation(fields: [opportunityId], references: [id])
+  createdAt    DateTime     @default(now())
+}
+
+model EmailThread {
+  id          String   @id @default(uuid())
+  subject     String
+  participants String[]
+  preview     String?
+  messages    Json
+  accountId   String?
+  account     Account? @relation(fields: [accountId], references: [id])
+  contactId   String?
+  contact     Contact? @relation(fields: [contactId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  name      String
+  sku       String   @unique
+  basePrice Float
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PriceList {
+  id        String   @id @default(uuid())
+  name      String
+  currency  String   @default("USD")
+  items     PriceListItem[]
+  createdAt DateTime @default(now())
+}
+
+model PriceListItem {
+  id          String    @id @default(uuid())
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id])
+  priceListId String
+  priceList   PriceList @relation(fields: [priceListId], references: [id])
+  price       Float
+}
+
+model Quote {
+  id            String   @id @default(uuid())
+  opportunityId String?
+  opportunity   Opportunity? @relation(fields: [opportunityId], references: [id])
+  title         String
+  currency      String   @default("USD")
+  status        String   @default("DRAFT")
+  total         Float    @default(0)
+  lines         QuoteLine[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model QuoteLine {
+  id        String  @id @default(uuid())
+  quoteId   String
+  quote     Quote   @relation(fields: [quoteId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  qty       Int     @default(1)
+  unitPrice Float
+  lineTotal Float
+}
+
+model Workflow {
+  id        String   @id @default(uuid())
+  name      String
+  active    Boolean  @default(true)
+  // definición simple JSON: { trigger: "...", actions: [{type:"...", params:{...}}] }
+  definition Json
+  createdAt DateTime @default(now())
+}
+
+model KnowledgeDoc {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  tags      String[]
+  createdAt DateTime @default(now())
+}

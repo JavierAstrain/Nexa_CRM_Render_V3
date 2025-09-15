@@ -1,0 +1,27 @@
+[
+  {
+    "title": "Guía de ventas B2B",
+    "content": "Prioriza cuentas con alto potencial, usa cadencias de 7-7-7 días y revisa objeciones comunes.",
+    "tags": [
+      "ventas",
+      "b2b",
+      "cadencias"
+    ]
+  },
+  {
+    "title": "Playbook de discovery",
+    "content": "Haz preguntas abiertas, identifica pain, presupuesto, autoridad y timing (BANT).",
+    "tags": [
+      "discovery",
+      "bant"
+    ]
+  },
+  {
+    "title": "Pricing estándar",
+    "content": "Lista de precios anual con descuentos escalonados por volumen.",
+    "tags": [
+      "pricing",
+      "descuento"
+    ]
+  }
+]

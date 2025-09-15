@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: nexa-backend
+    env: docker
+    rootDir: backend
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      - key: JWT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: VITE_GRAPHQL_URL
+        sync: false
+      - key: OAUTH_GOOGLE_CLIENT_ID
+        sync: false
+      - key: OAUTH_GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: OAUTH_GOOGLE_CALLBACK_URL
+        sync: false
+      - key: SAML_ENTRY_POINT
+        sync: false
+      - key: SAML_ISSUER
+        sync: false
+      - key: SAML_CALLBACK_URL
+        sync: false
+      - key: SAML_PUBLIC_CERT
+        sync: false
+      - key: SAML_PRIVATE_KEY
+        sync: false
+
+  - type: static
+    name: nexa-frontend
+    rootDir: frontend
+    buildCommand: pnpm i && pnpm build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_GRAPHQL_URL
+        sync: false
+      - key: VITE_REST_URL
+        sync: false
+
+databases:
+  - name: nexa-postgres
