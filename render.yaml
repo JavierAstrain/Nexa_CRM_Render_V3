@@ -3,21 +3,48 @@ services:
     name: nexa-backend
     env: docker
     rootDir: backend
+    plan: starter
     healthCheckPath: /health
-    # ...
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8080
+      - key: JWT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: VITE_GRAPHQL_URL
+        sync: false
+      - key: OAUTH_GOOGLE_CLIENT_ID
+        sync: false
+      - key: OAUTH_GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: OAUTH_GOOGLE_CALLBACK_URL
+        sync: false
+      - key: SAML_ENTRY_POINT
+        sync: false
+      - key: SAML_ISSUER
+        sync: false
+      - key: SAML_CALLBACK_URL
+        sync: false
+      - key: SAML_PUBLIC_CERT
+        sync: false
+      - key: SAML_PRIVATE_KEY
+        sync: false
 
-staticSites:
-  - name: nexa-frontend
+  - type: web
+    name: nexa-frontend
+    env: static
     rootDir: frontend
     buildCommand: pnpm i && pnpm build
-    publishPath: dist
-    # variables VITE_* para el build del front:
+    staticPublishPath: dist
     envVars:
       - key: VITE_GRAPHQL_URL
-        # value: https://TU-BACKEND.onrender.com/graphql
         sync: false
       - key: VITE_REST_URL
-        # value: https://TU-BACKEND.onrender.com
         sync: false
 
 databases:
